@@ -9,7 +9,7 @@ public class WorldGenerator : MonoBehaviour {
 	[SerializeField]
 	private GameObject _terrainPrefab;
 
-	public const int GridSize = 10;
+	public const int GridSize = 15;
 	private const float DistanceBetweenCubes = 0.1f;
 
 	private void GenerateWorld()
