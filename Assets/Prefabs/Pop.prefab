@@ -322,7 +322,6 @@ GameObject:
   - component: {fileID: 4160712509754578}
   - component: {fileID: 23457623694176506}
   - component: {fileID: 136262381186451624}
-  - component: {fileID: 114831408770393952}
   - component: {fileID: 195563341678015484}
   - component: {fileID: 54225262805398628}
   - component: {fileID: 95777937709093230}
@@ -1033,20 +1032,6 @@ MonoBehaviour:
   m_MoveSpeedMultiplier: 1
   m_AnimSpeedMultiplier: 1
   m_GroundCheckDistance: 0.2
---- !u!114 &114831408770393952
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1633677434341010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 756541c2363dc7f4794c465fdf04f63c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cam: {fileID: 0}
-  agent: {fileID: 195563341678015484}
-  character: {fileID: 114585910841461886}
 --- !u!136 &136262381186451624
 CapsuleCollider:
   m_ObjectHideFlags: 1
