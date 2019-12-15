@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
-using UnityStandardAssets.Characters.ThirdPerson;
+//using UnityStandardAssets.Characters.ThirdPerson;
 
 public class PopMovementController : MonoBehaviour
 {
@@ -9,7 +9,7 @@ public class PopMovementController : MonoBehaviour
 
     public NavMeshAgent agent;
 
-    public ThirdPersonCharacter character;
+    //public ThirdPersonCharacter character;
 
     void Start()
     {
@@ -32,11 +32,11 @@ public class PopMovementController : MonoBehaviour
 
         if (agent.remainingDistance > agent.stoppingDistance)
         {
-            character.Move(agent.desiredVelocity, false, false);
+            //character.Move(agent.desiredVelocity, false, false);
         }
         else
         {
-            character.Move(Vector3.zero, false, false);
+            //character.Move(Vector3.zero, false, false);
         }
 
     }

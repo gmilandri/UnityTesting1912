@@ -7,59 +7,48 @@ public class WorldManager : MonoBehaviour {
 	private GameObject _ground;
 
 	[SerializeField]
+	private const int _groundSize = 100;
+	[SerializeField]
 	private GameObject _treePrefab;
 
-	public const int TreeCount = 50;
-	private const float _distanceBetweenTrees = 1.5f;
+	public const int MaxTrees = 50;
 
-	private List<GameObject> _trees;
+	public int TreeCount ()
+	{
+		var answer = 0;
+
+		foreach (var spawnable in WorldObjects)
+		{
+			if (spawnable is Tree)
+				answer++;
+		}
+
+		return answer;
+	}
+
+	public List<ISpawnable> WorldObjects { get; private set; }
 
 	void Start()
 	{
-		_trees = new List<GameObject>();
+		WorldObjects = new List<ISpawnable>();
 		_ground = GameObject.FindGameObjectWithTag("Ground");
+		_ground.transform.localScale = new Vector3(_groundSize, 0.1f, _groundSize);
 		GenerateWorld();
 	}
 
 	private void GenerateWorld()
 	{
-		GameObject parent = GameObject.Find("Trees");
-		var treePositions = new List<Vector3>();
-
-		for (int i = 0; i < TreeCount; i++)
+		do
 		{
-			GameObject newTree = Instantiate(_treePrefab, parent.transform);
-			_trees.Add(newTree);
+			GameObject newTree = Instantiate(_treePrefab, gameObject.transform);
 
-			float positiveValue = System.Math.Abs(_ground.transform.localScale.x) / 2f;
-			float negativeValue = positiveValue * (-1);
+			float positiveMax = System.Math.Abs(_ground.transform.localScale.x) / 2f;
+			float negativeMax = positiveMax * (-1);
 
-			var foundPosition = false;
-
-			do
-			{
-				var treePos = new Vector3(Random.Range(negativeValue, positiveValue), 0f, Random.Range(negativeValue, positiveValue));
-
-				var minDistance = float.MaxValue;
-
-				if (treePositions.Count != 0)
-				{
-					foreach (var pos in treePositions)
-					{
-						if (Vector3.Distance(pos, treePos) < minDistance)
-							minDistance = Vector3.Distance(pos, treePos);
-					}
-				}
-				if (minDistance > _distanceBetweenTrees || treePositions.Count == 0)
-				{
-					foundPosition = true;
-					treePositions.Add(treePos);
-					newTree.transform.position = treePos;
-				}
-			}
-			while (!foundPosition);
+			newTree.GetComponent<Tree>().InstantiateThis(negativeMax, positiveMax, WorldObjects);
 
 		}
+		while (TreeCount() < MaxTrees);
 	}
 
 }
