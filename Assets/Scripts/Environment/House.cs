@@ -5,7 +5,8 @@ using UnityEngine;
 public class House : MonoBehaviour, ISpawnable {
 
 	private WorldManager _worldManager;
-	private const float _distancefromHouses = 5f;
+	[SerializeField]
+	private const float _distancefromHouses = 7f;
 
 	// Use this for initialization
 	void Start()

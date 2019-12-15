@@ -9,7 +9,8 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 	public IMovement HumanMovement { get; private set; }
 
 	private WorldManager _worldManager;
-	private const float _distancefromPops = 1f;
+	[SerializeField]
+	private const float _distancefromPops = 3f;
 
 	[SerializeField]
 	private ISpawnable mySpawnDestination;

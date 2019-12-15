@@ -71,6 +71,18 @@ public class WorldManager : MonoBehaviour {
 		GenerateWorld();
 	}
 
+	void Update()
+	{
+		foreach (var spawn in WorldObjects)
+		{
+			if (spawn is Tree && !spawn.ThisGameObject().activeSelf)
+			{
+				Debug.Log("Testing..");
+				spawn.InstantiateThis(_negativeMax, _positiveMax, WorldObjects);
+			}
+		}
+	}
+
 	private float _positiveMax => System.Math.Abs(_ground.transform.localScale.x) / 2f - 2f;
 
 	private float _negativeMax => _positiveMax * (-1);

@@ -5,7 +5,8 @@ using UnityEngine;
 public class Tree : MonoBehaviour, ISpawnable {
 
 	private WorldManager _worldManager;
-	private const float _distancefromTrees = 2f;
+	[SerializeField]
+	private const float _distancefromTrees = 3f;
 
 	// Use this for initialization
 	void Start () {
@@ -63,8 +64,13 @@ public class Tree : MonoBehaviour, ISpawnable {
 			if (spawns.Count == 0 || IsBeyondMinimumDistance(spawns[closestSpawnIndex]))
 			{
 				foundPosition = true;
+
+				if (!spawns.Contains(this))
+				{
+					spawns.Add(this);
+				}
 				gameObject.transform.position = treePos;
-				spawns.Add(this);
+				gameObject.SetActive(true);
 			}
 			breakLoop++;
 			if (breakLoop == 1000)
