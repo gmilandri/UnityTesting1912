@@ -435,3 +435,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _treePrefab: {fileID: 1658868446703838, guid: a9ab93ff638f3bd47b245df90ba1534d,
     type: 2}
+  _housePrefab: {fileID: 1827868007378104, guid: 1991fa7d17f98e84f84c195069fef59a,
+    type: 2}

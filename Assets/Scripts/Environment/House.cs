@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tree : MonoBehaviour, ISpawnable {
+public class House : MonoBehaviour, ISpawnable {
 
 	private WorldManager _worldManager;
-	private const float _distancefromTrees = 2f;
+	private const float _distancefromHouses = 5f;
 
 	// Use this for initialization
-	void Start () {
+	void Start()
+	{
 		_worldManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldManager>();
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		
@@ -19,7 +20,7 @@ public class Tree : MonoBehaviour, ISpawnable {
 
 	public GameObject ThisGameObject() => gameObject;
 
-	public float MyMinimumDistance() => _distancefromTrees;
+	public float MyMinimumDistance() => _distancefromHouses;
 
 	public bool IsAtMinimumDistance(ISpawnable other)
 	{
@@ -36,14 +37,14 @@ public class Tree : MonoBehaviour, ISpawnable {
 
 	}
 
-	public void InstantiateThis (float negativeMax, float positiveMax, List<ISpawnable> spawns)
+	public void InstantiateThis(float negativeMax, float positiveMax, List<ISpawnable> spawns)
 	{
 		var foundPosition = false;
 		int breakLoop = 0;
 
 		do
 		{
-			var treePos = new Vector3(Random.Range(negativeMax, positiveMax), 0f, Random.Range(negativeMax, positiveMax));
+			var housePos = new Vector3(Random.Range(negativeMax, positiveMax), 1.5f, Random.Range(negativeMax, positiveMax));
 
 			var minDistance = float.MaxValue;
 			var closestSpawnIndex = 0;
@@ -53,9 +54,9 @@ public class Tree : MonoBehaviour, ISpawnable {
 				for (int i = 0; i < spawns.Count; i++)
 				{
 					var pos = spawns[i].ThisGameObject().transform.position;
-					if (Vector3.Distance(pos, treePos) < minDistance)
+					if (Vector3.Distance(pos, housePos) < minDistance)
 					{
-						minDistance = Vector3.Distance(pos, treePos);
+						minDistance = Vector3.Distance(pos, housePos);
 						closestSpawnIndex = i;
 					}
 				}
@@ -63,15 +64,16 @@ public class Tree : MonoBehaviour, ISpawnable {
 			if (spawns.Count == 0 || IsAtMinimumDistance(spawns[closestSpawnIndex]))
 			{
 				foundPosition = true;
-				gameObject.transform.position = treePos;
+				gameObject.transform.position = housePos;
 				spawns.Add(this);
 			}
 			breakLoop++;
 			if (breakLoop == 100)
 			{
-				Debug.LogError("No valid position found for a tree.");
+				Debug.LogError("No valid position found for a house.");
 				break;
 			}
+
 		}
 		while (!foundPosition);
 	}
