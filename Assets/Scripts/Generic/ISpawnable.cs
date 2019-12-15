@@ -4,7 +4,7 @@ using UnityEngine;
 public interface ISpawnable
 {
 
-    bool IsAtMinimumDistance(ISpawnable other);
+    bool IsBeyondMinimumDistance(ISpawnable other);
 
     GameObject ThisGameObject();
 

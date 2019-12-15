@@ -211,7 +211,7 @@ MonoBehaviour:
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 512
   m_UseGeometry: 0
   m_DefaultArea: 0
   m_IgnoreNavMeshAgent: 1
@@ -301,13 +301,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 282840810}
-  m_LocalRotation: {x: 0.27914688, y: -0, z: -0, w: 0.9602485}
-  m_LocalPosition: {x: 0, y: 18.75, z: -36.73}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 75, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 32.419003, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &1479616608
 GameObject:
   m_ObjectHideFlags: 0
@@ -319,7 +319,7 @@ GameObject:
   - component: {fileID: 1479616611}
   - component: {fileID: 1479616610}
   - component: {fileID: 1479616609}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Ground
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -437,3 +437,5 @@ MonoBehaviour:
     type: 2}
   _housePrefab: {fileID: 1827868007378104, guid: 1991fa7d17f98e84f84c195069fef59a,
     type: 2}
+  _popPrefab: {fileID: 1909013443763984, guid: 77954f8400ec7d14989db8abcc609de6, type: 2}
+  navMesh: {fileID: 274021417}

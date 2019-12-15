@@ -22,7 +22,7 @@ public class House : MonoBehaviour, ISpawnable {
 
 	public float MyMinimumDistance() => _distancefromHouses;
 
-	public bool IsAtMinimumDistance(ISpawnable other)
+	public bool IsBeyondMinimumDistance(ISpawnable other)
 	{
 		var otherPos = other.ThisGameObject().transform.position;
 		var myPos = gameObject.transform.position;
@@ -61,14 +61,14 @@ public class House : MonoBehaviour, ISpawnable {
 					}
 				}
 			}
-			if (spawns.Count == 0 || IsAtMinimumDistance(spawns[closestSpawnIndex]))
+			if (spawns.Count == 0 || IsBeyondMinimumDistance(spawns[closestSpawnIndex]))
 			{
 				foundPosition = true;
 				gameObject.transform.position = housePos;
 				spawns.Add(this);
 			}
 			breakLoop++;
-			if (breakLoop == 100)
+			if (breakLoop == 1000)
 			{
 				Debug.LogError("No valid position found for a house.");
 				break;
