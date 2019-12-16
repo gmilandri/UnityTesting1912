@@ -1,22 +1,51 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Tree : MonoBehaviour, ISpawnable {
 
 	private WorldManager _worldManager;
+	private EventManager _eventManager;
 	[SerializeField]
 	private const float _distancefromTrees = 3f;
+	public static int Count { get; private set; }
+
+	public bool HasBeenChoppedDown;
 
 	// Use this for initialization
 	void Start () {
 		_worldManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldManager>();
+		_eventManager = _worldManager.gameObject.GetComponent <EventManager>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
+
+	void OnEnable()
+	{
+		Count++;
+	}
+
+	void OnDisable()
+	{
+		Count--;
+	}
+
+	public IEnumerator ChopTree()
+	{
+		Debug.Log("Tree has been chopped... Waiting one second before inizializing it again.");
+		HasBeenChoppedDown = true;
+		yield return new WaitForSeconds(UnityEngine.Random.Range(2, 10));
+		Debug.Log("Planting Tree...");
+		_eventManager.OnTreeChopped(EventArgs.Empty);
+	}
+
+	public bool HasBeenGathered() => HasBeenChoppedDown;
+
+	public void SetAside() => gameObject.transform.position = new Vector3(10000f, 10000f, 10000f);
 
 	public GameObject ThisGameObject() => gameObject;
 
@@ -37,14 +66,14 @@ public class Tree : MonoBehaviour, ISpawnable {
 
 	}
 
-	public void InstantiateThis (float negativeMax, float positiveMax, List<ISpawnable> spawns)
+	public void InstantiateThis (float positiveMax, List<ISpawnable> spawns)
 	{
 		var foundPosition = false;
 		int breakLoop = 0;
 
 		do
 		{
-			var treePos = new Vector3(Random.Range(negativeMax, positiveMax), 0f, Random.Range(negativeMax, positiveMax));
+			var treePos = new Vector3(UnityEngine.Random.Range(0f, positiveMax), 0f, UnityEngine.Random.Range(0f, positiveMax));
 
 			var minDistance = float.MaxValue;
 			var closestSpawnIndex = 0;
@@ -70,7 +99,6 @@ public class Tree : MonoBehaviour, ISpawnable {
 					spawns.Add(this);
 				}
 				gameObject.transform.position = treePos;
-				gameObject.SetActive(true);
 			}
 			breakLoop++;
 			if (breakLoop == 1000)
@@ -80,5 +108,8 @@ public class Tree : MonoBehaviour, ISpawnable {
 			}
 		}
 		while (!foundPosition);
+
+		if (HasBeenChoppedDown)
+			HasBeenChoppedDown = false;
 	}
 }

@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,8 +9,6 @@ public class WorldManager : MonoBehaviour {
 
 	private GameObject _ground;
 
-	[SerializeField]
-	private const int _groundSize = 100;
 	[SerializeField]
 	private GameObject _treePrefab;
 	[SerializeField]
@@ -22,50 +22,23 @@ public class WorldManager : MonoBehaviour {
 	public const int StartingHouses = 4;
 	public const int StartingPops = 3;
 
-	public int TreeCount ()
-	{
-		var answer = 0;
+	private const int _groundSize = 100;
+	private const float _groundHeight = 0.1f;
 
-		foreach (var spawnable in WorldObjects)
-		{
-			if (spawnable is Tree)
-				answer++;
-		}
-
-		return answer;
-	}
-
-	public int HouseCount()
-	{
-		var answer = 0;
-
-		foreach (var spawnable in WorldObjects)
-		{
-			if (spawnable is House)
-				answer++;
-		}
-
-		return answer;
-	}
-
-	public int PopCount()
-	{
-		var answer = 0;
-
-		foreach (var spawnable in WorldObjects)
-		{
-			if (spawnable is Human)
-				answer++;
-		}
-
-		return answer;
-	}
+	private EventManager _eventManager;
 
 	public List<ISpawnable> WorldObjects { get; private set; }
 
+	//public int TreeCount => (from s in WorldObjects where s is Tree select s).Count();
+
+
 	void Start()
 	{
+		_eventManager = gameObject.GetComponent<EventManager>();
+		_eventManager.TreeChopped += _worldManager_TreeChopped;
+
 		WorldObjects = new List<ISpawnable>();
+
 		_ground = GameObject.FindGameObjectWithTag("Ground");
 
 		GenerateWorld();
@@ -73,20 +46,17 @@ public class WorldManager : MonoBehaviour {
 
 	void Update()
 	{
-		foreach (var spawn in WorldObjects)
-		{
-			if (spawn is Tree && !spawn.ThisGameObject().activeSelf)
-			{
-				Debug.Log("Testing..");
-				spawn.InstantiateThis(_negativeMax, _positiveMax, WorldObjects);
-			}
-		}
+
 	}
 
-	private float _positiveMax => System.Math.Abs(_ground.transform.localScale.x) / 2f - 2f;
+	void _worldManager_TreeChopped(object sender, EventArgs e)
+	{
+		Debug.Log("Planting new tree...");
+		var tree = WorldObjects.First(t => t.HasBeenGathered());
+		tree.InstantiateThis(_positiveMax, WorldObjects);
+	}
 
-	private float _negativeMax => _positiveMax * (-1);
-
+	private float _positiveMax => Math.Abs(_ground.transform.localScale.x);
 
 	private void GenerateWorld()
 	{
@@ -104,7 +74,8 @@ public class WorldManager : MonoBehaviour {
 
 	private void SetWorldPlane ()
 	{
-		_ground.transform.localScale = new Vector3(_groundSize, 0.1f, _groundSize);
+		_ground.transform.localScale = new Vector3(_groundSize, _groundHeight, _groundSize);
+		_ground.transform.position = new Vector3(_groundSize / 2f, _groundHeight / -2f, _groundSize / 2f);
 	}
 
 	private void PlaceTrees ()
@@ -113,10 +84,10 @@ public class WorldManager : MonoBehaviour {
 		{
 			GameObject newTree = Instantiate(_treePrefab, gameObject.transform);
 
-			newTree.GetComponent<Tree>().InstantiateThis(_negativeMax, _positiveMax, WorldObjects);
+			newTree.GetComponent<Tree>().InstantiateThis(_positiveMax, WorldObjects);
 
 		}
-		while (TreeCount() < StartingTrees);
+		while (Tree.Count < StartingTrees);
 	}
 
 	private void PlaceHouses ()
@@ -125,10 +96,10 @@ public class WorldManager : MonoBehaviour {
 		{
 			GameObject newHouse = Instantiate(_housePrefab, gameObject.transform);
 
-			newHouse.GetComponent<House>().InstantiateThis(_negativeMax, _positiveMax, WorldObjects);
+			newHouse.GetComponent<House>().InstantiateThis(_positiveMax, WorldObjects);
 
 		}
-		while (HouseCount() < StartingHouses);
+		while (House.Count < StartingHouses);
 	}
 
 	private void PlacePops()
@@ -137,10 +108,10 @@ public class WorldManager : MonoBehaviour {
 		{
 			GameObject newPop = Instantiate(_popPrefab, gameObject.transform);
 
-			newPop.GetComponent<Human>().InstantiateThis(_negativeMax, _positiveMax, WorldObjects);
+			newPop.GetComponent<Human>().InstantiateThis(_positiveMax, WorldObjects);
 
 		}
-		while (PopCount() < StartingPops);
+		while (Human.Count < StartingPops);
 	}
 
 }

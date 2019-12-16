@@ -15,10 +15,21 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 	[SerializeField]
 	private ISpawnable mySpawnDestination;
 
+	public static int Count { get; private set; }
+
 	void Start()
 	{
 		HumanMovement = GetComponent<WalkMovement>();
 		_worldManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldManager>();
+	}
+	void OnEnable()
+	{
+		Count++;
+	}
+
+	void OnDisable()
+	{
+		Count--;
 	}
 
 	void Update()
@@ -32,7 +43,7 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 
 			for (int i = 0; i < spawns.Count; i++)
 			{
-				if (spawns[i] is Tree && spawns[i].ThisGameObject().activeSelf)
+				if (spawns[i] is Tree && !spawns[i].HasBeenGathered())
 				{
 					var pos = spawns[i].ThisGameObject().transform.position;
 					if (Vector3.Distance(pos, myPos) < minDistance)
@@ -50,13 +61,19 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 		}
 		else
 		{
-			mySpawnDestination.ThisGameObject().SetActive(false);
+			Debug.Log("Chopping Down Tree...");
+			mySpawnDestination.SetAside();
+			StartCoroutine(mySpawnDestination.ThisGameObject().GetComponent<Tree>().ChopTree()); //CHANGE RESOURCE INTO IGATHERABLE AND GENERALIZE THIS
 			mySpawnDestination = null;
 			GetComponent<NavMeshAgent>().ResetPath();
 
 		}
 
 	}
+
+	public bool HasBeenGathered() => true;
+
+	public void SetAside() => gameObject.transform.position = new Vector3(10000f, 10000f, 10000f);
 
 	public GameObject ThisGameObject() => gameObject;
 
@@ -80,14 +97,14 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 
 	}
 
-	public void InstantiateThis(float negativeMax, float positiveMax, List<ISpawnable> spawns)
+	public void InstantiateThis(float positiveMax, List<ISpawnable> spawns)
 	{
 		var foundPosition = false;
 		int breakLoop = 0;
 
 		do
 		{
-			var popPos = new Vector3(Random.Range(negativeMax, positiveMax), 1f, Random.Range(negativeMax, positiveMax));
+			var popPos = new Vector3(UnityEngine.Random.Range(0f, positiveMax), 1f, UnityEngine.Random.Range(0f, positiveMax));
 
 			var minDistance = float.MaxValue;
 			var closestSpawnIndex = 0;

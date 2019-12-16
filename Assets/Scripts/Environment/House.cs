@@ -8,16 +8,30 @@ public class House : MonoBehaviour, ISpawnable {
 	[SerializeField]
 	private const float _distancefromHouses = 7f;
 
+	public static int Count { get; private set; }
+
 	// Use this for initialization
 	void Start()
 	{
 		_worldManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldManager>();
+	}
+	void OnEnable()
+	{
+		Count++;
+	}
+
+	void OnDisable()
+	{
+		Count--;
 	}
 
 	// Update is called once per frame
 	void Update () {
 		
 	}
+	public bool HasBeenGathered() => true;
+
+	public void SetAside() => gameObject.transform.position = new Vector3(10000f, 10000f, 10000f);
 
 	public GameObject ThisGameObject() => gameObject;
 
@@ -38,14 +52,14 @@ public class House : MonoBehaviour, ISpawnable {
 
 	}
 
-	public void InstantiateThis(float negativeMax, float positiveMax, List<ISpawnable> spawns)
+	public void InstantiateThis(float positiveMax, List<ISpawnable> spawns)
 	{
 		var foundPosition = false;
 		int breakLoop = 0;
 
 		do
 		{
-			var housePos = new Vector3(Random.Range(negativeMax, positiveMax), 1.5f, Random.Range(negativeMax, positiveMax));
+			var housePos = new Vector3(UnityEngine.Random.Range(0f, positiveMax), 1.5f, UnityEngine.Random.Range(0f, positiveMax));
 
 			var minDistance = float.MaxValue;
 			var closestSpawnIndex = 0;
