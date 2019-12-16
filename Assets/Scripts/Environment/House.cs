@@ -5,13 +5,12 @@ using UnityEngine;
 public class House : MonoBehaviour, ISpawnable {
 
 	private WorldManager _worldManager;
-	[SerializeField]
-	private const float _distancefromHouses = 7f;
+	public GridCell MyGridCell;
 
 	public static int Count { get; private set; }
 
 	// Use this for initialization
-	void Start()
+	void Awake()
 	{
 		_worldManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldManager>();
 	}
@@ -35,23 +34,6 @@ public class House : MonoBehaviour, ISpawnable {
 
 	public GameObject ThisGameObject() => gameObject;
 
-	public float MyMinimumDistance() => _distancefromHouses;
-
-	public bool IsBeyondMinimumDistance(ISpawnable other)
-	{
-		var otherPos = other.ThisGameObject().transform.position;
-		var myPos = gameObject.transform.position;
-		var distance = Vector3.Distance(myPos, otherPos);
-		float minDistance = MyMinimumDistance();
-		if (other.MyMinimumDistance() > minDistance)
-			minDistance = other.MyMinimumDistance();
-
-		if (distance > minDistance)
-			return true;
-		return false;
-
-	}
-
 	public void InstantiateThis(float positiveMax, List<ISpawnable> spawns)
 	{
 		var foundPosition = false;
@@ -59,29 +41,25 @@ public class House : MonoBehaviour, ISpawnable {
 
 		do
 		{
-			var housePos = new Vector3(UnityEngine.Random.Range(0f, positiveMax), 1.5f, UnityEngine.Random.Range(0f, positiveMax));
+			int randomX = UnityEngine.Random.Range(0, _worldManager.GetGridSize);
+			int randomZ = UnityEngine.Random.Range(0, _worldManager.GetGridSize);
 
-			var minDistance = float.MaxValue;
-			var closestSpawnIndex = 0;
-
-			if (spawns.Count > 1)
-			{
-				for (int i = 0; i < spawns.Count; i++)
-				{
-					var pos = spawns[i].ThisGameObject().transform.position;
-					if (Vector3.Distance(pos, housePos) < minDistance)
-					{
-						minDistance = Vector3.Distance(pos, housePos);
-						closestSpawnIndex = i;
-					}
-				}
-			}
-			if (spawns.Count == 0 || IsBeyondMinimumDistance(spawns[closestSpawnIndex]))
+			if (_worldManager.gridCells[randomX, randomZ].IsEmpty)
 			{
 				foundPosition = true;
-				gameObject.transform.position = housePos;
-				spawns.Add(this);
+
+				if (!spawns.Contains(this))
+				{
+					spawns.Add(this);
+				}
+
+				gameObject.transform.position = new Vector3(_worldManager.gridCells[randomX, randomZ].gameObject.transform.position.x, 1.5f, _worldManager.gridCells[randomX, randomZ].gameObject.transform.position.z);
+
+				_worldManager.gridCells[randomX, randomZ].GridObject = this;
+				MyGridCell = _worldManager.gridCells[randomX, randomZ];
+
 			}
+
 			breakLoop++;
 			if (breakLoop == 1000)
 			{

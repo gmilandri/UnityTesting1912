@@ -7,14 +7,13 @@ public class Tree : MonoBehaviour, ISpawnable {
 
 	private WorldManager _worldManager;
 	private EventManager _eventManager;
-	[SerializeField]
-	private const float _distancefromTrees = 3f;
+	public GridCell MyGridCell;
 	public static int Count { get; private set; }
 
 	public bool HasBeenChoppedDown;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		_worldManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldManager>();
 		_eventManager = _worldManager.gameObject.GetComponent <EventManager>();
 	}
@@ -37,6 +36,8 @@ public class Tree : MonoBehaviour, ISpawnable {
 	public IEnumerator ChopTree()
 	{
 		Debug.Log("Tree has been chopped... Waiting one second before inizializing it again.");
+		MyGridCell.GridObject = null;
+		MyGridCell = null;
 		HasBeenChoppedDown = true;
 		yield return new WaitForSeconds(UnityEngine.Random.Range(2, 10));
 		Debug.Log("Planting Tree...");
@@ -49,23 +50,6 @@ public class Tree : MonoBehaviour, ISpawnable {
 
 	public GameObject ThisGameObject() => gameObject;
 
-	public float MyMinimumDistance() => _distancefromTrees;
-
-	public bool IsBeyondMinimumDistance(ISpawnable other)
-	{
-		var otherPos = other.ThisGameObject().transform.position;
-		var myPos = gameObject.transform.position;
-		var distance = Vector3.Distance(myPos, otherPos);
-		float minDistance = MyMinimumDistance();
-		if (other.MyMinimumDistance() > minDistance)
-			minDistance = other.MyMinimumDistance();
-
-		if (distance > minDistance)
-			return true;
-		return false;
-
-	}
-
 	public void InstantiateThis (float positiveMax, List<ISpawnable> spawns)
 	{
 		var foundPosition = false;
@@ -73,24 +57,10 @@ public class Tree : MonoBehaviour, ISpawnable {
 
 		do
 		{
-			var treePos = new Vector3(UnityEngine.Random.Range(0f, positiveMax), 0f, UnityEngine.Random.Range(0f, positiveMax));
+			int randomX = UnityEngine.Random.Range(0, _worldManager.GetGridSize);
+			int randomZ = UnityEngine.Random.Range(0, _worldManager.GetGridSize);
 
-			var minDistance = float.MaxValue;
-			var closestSpawnIndex = 0;
-
-			if (spawns.Count > 1)
-			{
-				for (int i = 0; i < spawns.Count; i++)
-				{
-					var pos = spawns[i].ThisGameObject().transform.position;
-					if (Vector3.Distance(pos, treePos) < minDistance)
-					{
-						minDistance = Vector3.Distance(pos, treePos);
-						closestSpawnIndex = i;
-					}
-				}
-			}
-			if (spawns.Count == 0 || IsBeyondMinimumDistance(spawns[closestSpawnIndex]))
+			if (_worldManager.gridCells[randomX,randomZ].IsEmpty)
 			{
 				foundPosition = true;
 
@@ -98,14 +68,21 @@ public class Tree : MonoBehaviour, ISpawnable {
 				{
 					spawns.Add(this);
 				}
-				gameObject.transform.position = treePos;
+
+				gameObject.transform.position = _worldManager.gridCells[randomX, randomZ].gameObject.transform.position;
+
+				_worldManager.gridCells[randomX, randomZ].GridObject = this;
+				MyGridCell = _worldManager.gridCells[randomX, randomZ];
+
 			}
+
 			breakLoop++;
 			if (breakLoop == 1000)
 			{
 				Debug.LogError("No valid position found for a tree.");
 				break;
 			}
+
 		}
 		while (!foundPosition);
 

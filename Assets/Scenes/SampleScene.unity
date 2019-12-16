@@ -319,7 +319,7 @@ GameObject:
   - component: {fileID: 1479616611}
   - component: {fileID: 1479616610}
   - component: {fileID: 1479616609}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Ground
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -387,8 +387,8 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1479616608}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 25, y: -0.05, z: 25}
-  m_LocalScale: {x: 50, y: 0.1, z: 50}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 0.1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -445,9 +445,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b4017f57f8552a47ad94bc3a83baf17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _cellPrefab: {fileID: 1485128590229060, guid: faafda52f608f42468eb0f940d7a2cd4,
+    type: 2}
   _treePrefab: {fileID: 1658868446703838, guid: a9ab93ff638f3bd47b245df90ba1534d,
     type: 2}
   _housePrefab: {fileID: 1827868007378104, guid: 1991fa7d17f98e84f84c195069fef59a,
     type: 2}
   _popPrefab: {fileID: 1909013443763984, guid: 77954f8400ec7d14989db8abcc609de6, type: 2}
   navMesh: {fileID: 274021417}
+  timeScale: 5

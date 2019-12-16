@@ -9,15 +9,15 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 	public IMovement HumanMovement { get; private set; }
 
 	private WorldManager _worldManager;
-	[SerializeField]
-	private const float _distancefromPops = 3f;
 
 	[SerializeField]
 	private ISpawnable mySpawnDestination;
 
 	public static int Count { get; private set; }
 
-	void Start()
+	private float _gatheringDistance = 2.5f;
+
+	void Awake()
 	{
 		HumanMovement = GetComponent<WalkMovement>();
 		_worldManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldManager>();
@@ -34,7 +34,7 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 
 	void Update()
 	{
-		if (IsBeyondMinimumDistance(mySpawnDestination))
+		if (mySpawnDestination == null)
 		{
 			var spawns = _worldManager.WorldObjects;
 			var myPos = gameObject.transform.position;
@@ -57,7 +57,10 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 			mySpawnDestination = spawns[closestSpawnIndex];
 
 			GetComponent<NavMeshAgent>().SetDestination(mySpawnDestination.ThisGameObject().transform.position);
-
+		}
+		else if (Vector3.Distance(mySpawnDestination.ThisGameObject().transform.position, gameObject.transform.position) > _gatheringDistance)
+		{
+			GetComponent<NavMeshAgent>().SetDestination(mySpawnDestination.ThisGameObject().transform.position);
 		}
 		else
 		{
@@ -77,26 +80,6 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 
 	public GameObject ThisGameObject() => gameObject;
 
-	public float MyMinimumDistance() => _distancefromPops;
-
-	public bool IsBeyondMinimumDistance(ISpawnable other)
-	{
-		if (other == null)
-			return true;
-
-		var otherPos = other.ThisGameObject().transform.position;
-		var myPos = gameObject.transform.position;
-		var distance = Vector3.Distance(myPos, otherPos);
-		float minDistance = MyMinimumDistance();
-		if (other.MyMinimumDistance() > minDistance)
-			minDistance = other.MyMinimumDistance();
-
-		if (distance > minDistance)
-			return true;
-		return false;
-
-	}
-
 	public void InstantiateThis(float positiveMax, List<ISpawnable> spawns)
 	{
 		var foundPosition = false;
@@ -104,34 +87,27 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 
 		do
 		{
-			var popPos = new Vector3(UnityEngine.Random.Range(0f, positiveMax), 1f, UnityEngine.Random.Range(0f, positiveMax));
+			int randomX = UnityEngine.Random.Range(0, _worldManager.GetGridSize);
+			int randomZ = UnityEngine.Random.Range(0, _worldManager.GetGridSize);
 
-			var minDistance = float.MaxValue;
-			var closestSpawnIndex = 0;
-
-			if (spawns.Count > 1)
-			{
-				for (int i = 0; i < spawns.Count; i++)
-				{
-					var pos = spawns[i].ThisGameObject().transform.position;
-					if (Vector3.Distance(pos, popPos) < minDistance)
-					{
-						minDistance = Vector3.Distance(pos, popPos);
-						closestSpawnIndex = i;
-					}
-				}
-			}
-			if (spawns.Count == 0 || IsBeyondMinimumDistance(spawns[closestSpawnIndex]))
+			if (_worldManager.gridCells[randomX, randomZ].IsEmpty)
 			{
 				foundPosition = true;
-				gameObject.transform.position = popPos;
+
+				if (!spawns.Contains(this))
+				{
+					spawns.Add(this);
+				}
+
+				gameObject.transform.position = new Vector3(_worldManager.gridCells[randomX, randomZ].gameObject.transform.position.x, 1f, _worldManager.gridCells[randomX, randomZ].gameObject.transform.position.z);
+				//_worldManager.gridCells[randomX, randomZ].GridObject = this;
 				GetComponent<NavMeshAgent>().enabled = true;
-				spawns.Add(this);
 			}
+
 			breakLoop++;
 			if (breakLoop == 1000)
 			{
-				Debug.LogError("No valid position found for a pop.");
+				Debug.LogError("No valid position found for a human.");
 				break;
 			}
 

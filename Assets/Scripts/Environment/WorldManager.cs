@@ -10,6 +10,8 @@ public class WorldManager : MonoBehaviour {
 	private GameObject _ground;
 
 	[SerializeField]
+	private GameObject _cellPrefab;
+	[SerializeField]
 	private GameObject _treePrefab;
 	[SerializeField]
 	private GameObject _housePrefab;
@@ -18,18 +20,20 @@ public class WorldManager : MonoBehaviour {
 	[SerializeField]
 	private NavMeshSurface navMesh;
 
-	public const int StartingTrees = 75;
-	public const int StartingHouses = 4;
-	public const int StartingPops = 3;
+	public const int StartingTrees = 50;
+	public const int StartingHouses = 2;
+	public const int StartingPops = 2;
 
-	private const int _groundSize = 100;
+	private const int _groundSize = 20;
 	private const float _groundHeight = 0.1f;
 
 	private EventManager _eventManager;
 
 	public List<ISpawnable> WorldObjects { get; private set; }
 
-	//public int TreeCount => (from s in WorldObjects where s is Tree select s).Count();
+	public GridCell[,] gridCells;
+
+	public int timeScale = 15;
 
 
 	void Start()
@@ -42,12 +46,16 @@ public class WorldManager : MonoBehaviour {
 		_ground = GameObject.FindGameObjectWithTag("Ground");
 
 		GenerateWorld();
+
+		//TEST
 	}
 
 	void Update()
 	{
-
+		Time.timeScale = timeScale;
 	}
+
+	public int GetGridSize => _groundSize;
 
 	void _worldManager_TreeChopped(object sender, EventArgs e)
 	{
@@ -56,7 +64,7 @@ public class WorldManager : MonoBehaviour {
 		tree.InstantiateThis(_positiveMax, WorldObjects);
 	}
 
-	private float _positiveMax => Math.Abs(_ground.transform.localScale.x);
+	private float _positiveMax => Math.Abs(_groundSize * _cellPrefab.transform.localScale.x);
 
 	private void GenerateWorld()
 	{
@@ -74,8 +82,17 @@ public class WorldManager : MonoBehaviour {
 
 	private void SetWorldPlane ()
 	{
-		_ground.transform.localScale = new Vector3(_groundSize, _groundHeight, _groundSize);
-		_ground.transform.position = new Vector3(_groundSize / 2f, _groundHeight / -2f, _groundSize / 2f);
+		gridCells = new GridCell[_groundSize, _groundSize];
+
+		for (int i = 0; i < _groundSize; i++)
+		{
+			for (int j = 0; j < _groundSize; j++)
+			{
+				GameObject newCell = Instantiate(_cellPrefab, _ground.transform);
+				newCell.transform.position = new Vector3(i * _cellPrefab.transform.localScale.x, _groundHeight / -2f, j * _cellPrefab.transform.localScale.x);
+				gridCells[i, j] = newCell.GetComponent<GridCell>();
+			}
+		}
 	}
 
 	private void PlaceTrees ()
