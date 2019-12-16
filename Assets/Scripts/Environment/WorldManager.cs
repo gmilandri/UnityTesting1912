@@ -101,10 +101,10 @@ public class WorldManager : MonoBehaviour {
 		{
 			GameObject newTree = Instantiate(_treePrefab, gameObject.transform);
 
-			newTree.GetComponent<Tree>().InstantiateThis(_positiveMax, WorldObjects);
+			newTree.GetComponent<MyTree>().InstantiateThis(_positiveMax, WorldObjects);
 
 		}
-		while (Tree.Count < StartingTrees);
+		while (MyTree.Count < StartingTrees);
 	}
 
 	private void PlaceHouses ()

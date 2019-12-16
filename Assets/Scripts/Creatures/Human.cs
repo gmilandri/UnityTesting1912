@@ -15,12 +15,23 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 
 	public static int Count { get; private set; }
 
-	private float _gatheringDistance = 2.5f;
+	private float _gatheringDistance = 3f;
+
+	private Animator _animator;
+
+	private NavMeshAgent _navMeshAgent;
 
 	void Awake()
 	{
 		HumanMovement = GetComponent<WalkMovement>();
 		_worldManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldManager>();
+		_animator = GetComponent<Animator>();
+		_navMeshAgent = GetComponent<NavMeshAgent>();
+	}
+	void Start()
+	{
+		_animator.SetInteger("WeaponType_int", 0);
+		_animator.SetBool("Static_b", false);
 	}
 	void OnEnable()
 	{
@@ -34,6 +45,8 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 
 	void Update()
 	{
+		_animator.SetFloat("Speed_f", _navMeshAgent.velocity.magnitude / _navMeshAgent.speed);
+
 		if (mySpawnDestination == null)
 		{
 			var spawns = _worldManager.WorldObjects;
@@ -43,7 +56,7 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 
 			for (int i = 0; i < spawns.Count; i++)
 			{
-				if (spawns[i] is Tree && !spawns[i].HasBeenGathered())
+				if (spawns[i] is MyTree && !spawns[i].HasBeenGathered())
 				{
 					var pos = spawns[i].ThisGameObject().transform.position;
 					if (Vector3.Distance(pos, myPos) < minDistance)
@@ -56,19 +69,19 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 
 			mySpawnDestination = spawns[closestSpawnIndex];
 
-			GetComponent<NavMeshAgent>().SetDestination(mySpawnDestination.ThisGameObject().transform.position);
+			_navMeshAgent.SetDestination(mySpawnDestination.ThisGameObject().transform.position);
 		}
 		else if (Vector3.Distance(mySpawnDestination.ThisGameObject().transform.position, gameObject.transform.position) > _gatheringDistance)
 		{
-			GetComponent<NavMeshAgent>().SetDestination(mySpawnDestination.ThisGameObject().transform.position);
+			_navMeshAgent.SetDestination(mySpawnDestination.ThisGameObject().transform.position);
 		}
 		else
 		{
 			Debug.Log("Chopping Down Tree...");
 			mySpawnDestination.SetAside();
-			StartCoroutine(mySpawnDestination.ThisGameObject().GetComponent<Tree>().ChopTree()); //CHANGE RESOURCE INTO IGATHERABLE AND GENERALIZE THIS
+			StartCoroutine(mySpawnDestination.ThisGameObject().GetComponent<MyTree>().ChopTree()); //CHANGE RESOURCE INTO IGATHERABLE AND GENERALIZE THIS
 			mySpawnDestination = null;
-			GetComponent<NavMeshAgent>().ResetPath();
+			_navMeshAgent.ResetPath();
 
 		}
 
@@ -101,7 +114,7 @@ public class Human : MonoBehaviour, ICreature, ISpawnable {
 
 				gameObject.transform.position = new Vector3(_worldManager.gridCells[randomX, randomZ].gameObject.transform.position.x, 1f, _worldManager.gridCells[randomX, randomZ].gameObject.transform.position.z);
 				//_worldManager.gridCells[randomX, randomZ].GridObject = this;
-				GetComponent<NavMeshAgent>().enabled = true;
+				_navMeshAgent.enabled = true;
 			}
 
 			breakLoop++;

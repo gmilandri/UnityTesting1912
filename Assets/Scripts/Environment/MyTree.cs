@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tree : MonoBehaviour, ISpawnable {
+public class MyTree : MonoBehaviour, ISpawnable {
 
 	private WorldManager _worldManager;
 	private EventManager _eventManager;

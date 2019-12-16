@@ -53,7 +53,7 @@ public class House : MonoBehaviour, ISpawnable {
 					spawns.Add(this);
 				}
 
-				gameObject.transform.position = new Vector3(_worldManager.gridCells[randomX, randomZ].gameObject.transform.position.x, 1.5f, _worldManager.gridCells[randomX, randomZ].gameObject.transform.position.z);
+				gameObject.transform.position = _worldManager.gridCells[randomX, randomZ].gameObject.transform.position;
 
 				_worldManager.gridCells[randomX, randomZ].GridObject = this;
 				MyGridCell = _worldManager.gridCells[randomX, randomZ];
