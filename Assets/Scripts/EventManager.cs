@@ -1,16 +1,14 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class EventManager : MonoBehaviour {
 
-	public event EventHandler TreeChopped;
-	public virtual void OnTreeChopped(EventArgs e) => TreeChopped?.Invoke(this, e);
+	public UnityEvent OnTreeChopped;
 
 	void Start () {
-	
+		if (OnTreeChopped == null)
+			OnTreeChopped = new UnityEvent();
 	}
 	
-	void Update () {
-
-	}
 }

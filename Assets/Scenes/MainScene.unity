@@ -221,7 +221,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_BuildHeightMesh: 0
-  m_NavMeshData: {fileID: 23800000, guid: b83cc19a7e6379344917ba32a5a33148, type: 2}
+  m_NavMeshData: {fileID: 0}
 --- !u!4 &274021418
 Transform:
   m_ObjectHideFlags: 0
@@ -364,6 +364,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a0a35333160a84aa871536edf0c50b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnTreeChopped:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!4 &1654643167
 Transform:
   m_ObjectHideFlags: 0
@@ -388,10 +393,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b4017f57f8552a47ad94bc3a83baf17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cellPrefab: {fileID: 1485128590229060, guid: faafda52f608f42468eb0f940d7a2cd4,
-    type: 2}
-  _treePrefab: {fileID: 182186, guid: dc652c15fc5d5d24aadaed46da941c82, type: 2}
+  _cellPrefab: {fileID: 179200, guid: 43bb48f07d067d848b1d4c90aa160d5d, type: 2}
   _housePrefab: {fileID: 160310, guid: f5b09ff074cab9d4c950f6fc368b5ec6, type: 2}
   _popPrefab: {fileID: 180650, guid: c80d63d739f7231458975214a486d247, type: 2}
   navMesh: {fileID: 274021417}
+  TreePrefabs:
+  - {fileID: 162482, guid: 05ada695a69f7274f8a6562f8c72503d, type: 2}
+  - {fileID: 179848, guid: b95b26095c91c7d4ca6786fa33dd8076, type: 2}
+  - {fileID: 182186, guid: dc652c15fc5d5d24aadaed46da941c82, type: 2}
   timeScale: 1

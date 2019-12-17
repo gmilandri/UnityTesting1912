@@ -34,7 +34,7 @@ public class House : MonoBehaviour, ISpawnable {
 
 	public GameObject ThisGameObject() => gameObject;
 
-	public void InstantiateThis(float positiveMax, List<ISpawnable> spawns)
+	public void InstantiateThis(List<ISpawnable> spawns)
 	{
 		var foundPosition = false;
 		int breakLoop = 0;
@@ -53,7 +53,11 @@ public class House : MonoBehaviour, ISpawnable {
 					spawns.Add(this);
 				}
 
-				gameObject.transform.position = _worldManager.gridCells[randomX, randomZ].gameObject.transform.position;
+				var pos = new Vector3(_worldManager.gridCells[randomX, randomZ].gameObject.transform.position.x - 2.5f,
+					0f,
+					_worldManager.gridCells[randomX, randomZ].gameObject.transform.position.z - 2.5f);
+
+				gameObject.transform.position = pos;
 
 				_worldManager.gridCells[randomX, randomZ].GridObject = this;
 				MyGridCell = _worldManager.gridCells[randomX, randomZ];

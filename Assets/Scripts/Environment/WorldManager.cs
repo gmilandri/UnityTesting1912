@@ -12,13 +12,13 @@ public class WorldManager : MonoBehaviour {
 	[SerializeField]
 	private GameObject _cellPrefab;
 	[SerializeField]
-	private GameObject _treePrefab;
-	[SerializeField]
 	private GameObject _housePrefab;
 	[SerializeField]
 	private GameObject _popPrefab;
 	[SerializeField]
 	private NavMeshSurface navMesh;
+
+	public GameObject[] TreePrefabs;
 
 	public const int StartingTrees = 50;
 	public const int StartingHouses = 2;
@@ -39,7 +39,7 @@ public class WorldManager : MonoBehaviour {
 	void Start()
 	{
 		_eventManager = gameObject.GetComponent<EventManager>();
-		_eventManager.TreeChopped += _worldManager_TreeChopped;
+		_eventManager.OnTreeChopped.AddListener(_worldManager_TreeChopped);
 
 		WorldObjects = new List<ISpawnable>();
 
@@ -57,11 +57,11 @@ public class WorldManager : MonoBehaviour {
 
 	public int GetGridSize => _groundSize;
 
-	void _worldManager_TreeChopped(object sender, EventArgs e)
+	void _worldManager_TreeChopped()
 	{
 		Debug.Log("Planting new tree...");
 		var tree = WorldObjects.First(t => t.HasBeenGathered());
-		tree.InstantiateThis(_positiveMax, WorldObjects);
+		tree.InstantiateThis(WorldObjects);
 	}
 
 	private float _positiveMax => Math.Abs(_groundSize * _cellPrefab.transform.localScale.x);
@@ -89,7 +89,8 @@ public class WorldManager : MonoBehaviour {
 			for (int j = 0; j < _groundSize; j++)
 			{
 				GameObject newCell = Instantiate(_cellPrefab, _ground.transform);
-				newCell.transform.position = new Vector3(i * _cellPrefab.transform.localScale.x, _groundHeight / -2f, j * _cellPrefab.transform.localScale.x);
+				newCell.GetComponent<MeshRenderer>().material.color = Color.green;
+				newCell.transform.position = new Vector3(i * 5f, 0f, j * 5f);
 				gridCells[i, j] = newCell.GetComponent<GridCell>();
 			}
 		}
@@ -99,9 +100,11 @@ public class WorldManager : MonoBehaviour {
 	{
 		do
 		{
-			GameObject newTree = Instantiate(_treePrefab, gameObject.transform);
+			var randomTree = UnityEngine.Random.Range(0, 3);
 
-			newTree.GetComponent<MyTree>().InstantiateThis(_positiveMax, WorldObjects);
+			GameObject newTree = Instantiate(TreePrefabs[randomTree], gameObject.transform);
+
+			newTree.GetComponent<MyTree>().InstantiateThis(WorldObjects);
 
 		}
 		while (MyTree.Count < StartingTrees);
@@ -113,7 +116,7 @@ public class WorldManager : MonoBehaviour {
 		{
 			GameObject newHouse = Instantiate(_housePrefab, gameObject.transform);
 
-			newHouse.GetComponent<House>().InstantiateThis(_positiveMax, WorldObjects);
+			newHouse.GetComponent<House>().InstantiateThis(WorldObjects);
 
 		}
 		while (House.Count < StartingHouses);
@@ -125,7 +128,7 @@ public class WorldManager : MonoBehaviour {
 		{
 			GameObject newPop = Instantiate(_popPrefab, gameObject.transform);
 
-			newPop.GetComponent<Human>().InstantiateThis(_positiveMax, WorldObjects);
+			newPop.GetComponent<Human>().InstantiateThis(WorldObjects);
 
 		}
 		while (Human.Count < StartingPops);

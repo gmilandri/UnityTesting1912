@@ -8,7 +8,7 @@ public interface ISpawnable
 
     GameObject ThisGameObject();
 
-    void InstantiateThis(float positiveMax, List<ISpawnable> spawns);
+    void InstantiateThis(List<ISpawnable> spawns);
 
     void SetAside();
 
