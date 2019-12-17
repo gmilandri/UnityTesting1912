@@ -4,31 +4,10 @@ using UnityEngine;
 
 public class House : MonoBehaviour, ISpawnable {
 
-	private WorldManager _worldManager;
 	public GridCell MyGridCell;
-
 	public static int Count { get; private set; }
 
-	// Use this for initialization
-	void Awake()
-	{
-		_worldManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<WorldManager>();
-	}
-	void OnEnable()
-	{
-		Count++;
-	}
-
-	void OnDisable()
-	{
-		Count--;
-	}
-
-	// Update is called once per frame
-	void Update () {
-		
-	}
-	public bool HasBeenGathered() => true;
+	public bool HasBeenGathered() => false;
 
 	public void SetAside() => gameObject.transform.position = new Vector3(10000f, 10000f, 10000f);
 
@@ -36,42 +15,37 @@ public class House : MonoBehaviour, ISpawnable {
 
 	public void InstantiateThis(List<ISpawnable> spawns)
 	{
-		var foundPosition = false;
-		int breakLoop = 0;
-
-		do
+		if (WorldManager.Instance.EmptyGridCells.Count != 0)
 		{
-			int randomX = UnityEngine.Random.Range(0, _worldManager.GetGridSize);
-			int randomZ = UnityEngine.Random.Range(0, _worldManager.GetGridSize);
+			int randomIndex = UnityEngine.Random.Range(0, WorldManager.Instance.EmptyGridCells.Count);
 
-			if (_worldManager.gridCells[randomX, randomZ].IsEmpty)
+			if (!spawns.Contains(this))
 			{
-				foundPosition = true;
-
-				if (!spawns.Contains(this))
-				{
-					spawns.Add(this);
-				}
-
-				var pos = new Vector3(_worldManager.gridCells[randomX, randomZ].gameObject.transform.position.x - 2.5f,
-					0f,
-					_worldManager.gridCells[randomX, randomZ].gameObject.transform.position.z - 2.5f);
-
-				gameObject.transform.position = pos;
-
-				_worldManager.gridCells[randomX, randomZ].GridObject = this;
-				MyGridCell = _worldManager.gridCells[randomX, randomZ];
-
+				spawns.Add(this);
 			}
 
-			breakLoop++;
-			if (breakLoop == 1000)
-			{
-				Debug.LogError("No valid position found for a house.");
-				break;
-			}
+			var myNewGridCell = WorldManager.Instance.EmptyGridCells[randomIndex];
+
+			var pos = new Vector3(myNewGridCell.gameObject.transform.position.x - 2.5f, 0f, myNewGridCell.gameObject.transform.position.z - 2.5f);
+
+			gameObject.transform.position = pos;
+
+			myNewGridCell.GridObject = this;
+
+			MyGridCell = myNewGridCell;
+
+			WorldManager.Instance.EmptyGridCells.Remove(myNewGridCell);
+			WorldManager.Instance.OccupiedGridCells.Add(myNewGridCell);
 
 		}
-		while (!foundPosition);
+		else
+		{
+			Debug.LogError("No valid position found for a house.");
+		}
+	}
+
+	void Awake()
+	{
+		Count++;
 	}
 }

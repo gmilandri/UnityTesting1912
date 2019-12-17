@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class WorldManager : MonoBehaviour {
+public class WorldManager : Singleton<WorldManager> {
 
 	private GameObject _ground;
 
@@ -15,39 +15,39 @@ public class WorldManager : MonoBehaviour {
 	private GameObject _housePrefab;
 	[SerializeField]
 	private GameObject _popPrefab;
-	[SerializeField]
-	private NavMeshSurface navMesh;
 
 	public GameObject[] TreePrefabs;
+	public GameObject[] GenericObstacles;
 
-	public const int StartingTrees = 50;
-	public const int StartingHouses = 2;
-	public const int StartingPops = 2;
+	public int StartingTrees = 50;
+	public int StartingHouses = 2;
+	public int StartingPops = 2;
+	public int StartingObstacles = 5;
 
-	private const int _groundSize = 20;
-	private const float _groundHeight = 0.1f;
-
-	private EventManager _eventManager;
+	public int GroundSize = 20;
 
 	public List<ISpawnable> WorldObjects { get; private set; }
 
-	public GridCell[,] gridCells;
+	public List<GridCell> EmptyGridCells;
+	public List<GridCell> OccupiedGridCells;
 
-	public int timeScale = 15;
+	[Range(0f, 10f)]
+	public float timeScale = 1f;
+
+	void Awake()
+	{
+		WorldObjects = new List<ISpawnable>();
+		EmptyGridCells = new List<GridCell>();
+		OccupiedGridCells = new List<GridCell>();
+		_ground = GameObject.FindGameObjectWithTag("Ground");
+	}
 
 
 	void Start()
 	{
-		_eventManager = gameObject.GetComponent<EventManager>();
-		_eventManager.OnTreeChopped.AddListener(_worldManager_TreeChopped);
-
-		WorldObjects = new List<ISpawnable>();
-
-		_ground = GameObject.FindGameObjectWithTag("Ground");
+		EventManager.Instance.OnTreeChopped.AddListener(_worldManager_TreeChopped);
 
 		GenerateWorld();
-
-		//TEST
 	}
 
 	void Update()
@@ -55,16 +55,13 @@ public class WorldManager : MonoBehaviour {
 		Time.timeScale = timeScale;
 	}
 
-	public int GetGridSize => _groundSize;
+	public int GetGridSize => GroundSize;
 
 	void _worldManager_TreeChopped()
 	{
-		Debug.Log("Planting new tree...");
 		var tree = WorldObjects.First(t => t.HasBeenGathered());
 		tree.InstantiateThis(WorldObjects);
 	}
-
-	private float _positiveMax => Math.Abs(_groundSize * _cellPrefab.transform.localScale.x);
 
 	private void GenerateWorld()
 	{
@@ -75,32 +72,32 @@ public class WorldManager : MonoBehaviour {
 
 		PlaceHouses();
 
-		navMesh.BuildNavMesh();
+		PlaceGenericObstacles();
 
 		PlacePops();
 	}
 
 	private void SetWorldPlane ()
 	{
-		gridCells = new GridCell[_groundSize, _groundSize];
 
-		for (int i = 0; i < _groundSize; i++)
+		for (int i = 0; i < GroundSize; i++)
 		{
-			for (int j = 0; j < _groundSize; j++)
+			for (int j = 0; j < GroundSize; j++)
 			{
 				GameObject newCell = Instantiate(_cellPrefab, _ground.transform);
-				newCell.GetComponent<MeshRenderer>().material.color = Color.green;
 				newCell.transform.position = new Vector3(i * 5f, 0f, j * 5f);
-				gridCells[i, j] = newCell.GetComponent<GridCell>();
+				EmptyGridCells.Add(newCell.GetComponent<GridCell>());
 			}
 		}
+
+		GameObject.Find("NavMesh").GetComponent<NavMeshSurface>().BuildNavMesh();
 	}
 
 	private void PlaceTrees ()
 	{
 		do
 		{
-			var randomTree = UnityEngine.Random.Range(0, 3);
+			var randomTree = UnityEngine.Random.Range(0, TreePrefabs.Length);
 
 			GameObject newTree = Instantiate(TreePrefabs[randomTree], gameObject.transform);
 
@@ -120,6 +117,20 @@ public class WorldManager : MonoBehaviour {
 
 		}
 		while (House.Count < StartingHouses);
+	}
+
+	private void PlaceGenericObstacles()
+	{
+		do
+		{
+			var randomIndex = UnityEngine.Random.Range(0, GenericObstacles.Length);
+
+			GameObject newObstacle = Instantiate(GenericObstacles[randomIndex], gameObject.transform);
+
+			newObstacle.GetComponent<GenericObstacle>().InstantiateThis(WorldObjects);
+
+		}
+		while (GenericObstacle.Count < StartingObstacles);
 	}
 
 	private void PlacePops()

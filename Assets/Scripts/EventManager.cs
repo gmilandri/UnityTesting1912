@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class EventManager : MonoBehaviour {
+public class EventManager : Singleton<EventManager> {
 
 	public UnityEvent OnTreeChopped;
 

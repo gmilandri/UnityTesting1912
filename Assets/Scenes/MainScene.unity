@@ -396,9 +396,17 @@ MonoBehaviour:
   _cellPrefab: {fileID: 179200, guid: 43bb48f07d067d848b1d4c90aa160d5d, type: 2}
   _housePrefab: {fileID: 160310, guid: f5b09ff074cab9d4c950f6fc368b5ec6, type: 2}
   _popPrefab: {fileID: 180650, guid: c80d63d739f7231458975214a486d247, type: 2}
-  navMesh: {fileID: 274021417}
   TreePrefabs:
   - {fileID: 162482, guid: 05ada695a69f7274f8a6562f8c72503d, type: 2}
   - {fileID: 179848, guid: b95b26095c91c7d4ca6786fa33dd8076, type: 2}
   - {fileID: 182186, guid: dc652c15fc5d5d24aadaed46da941c82, type: 2}
+  GenericObstacles:
+  - {fileID: 152728, guid: a12c08b4d46f46242a2802fe90df7f73, type: 2}
+  StartingTrees: 5
+  StartingHouses: 1
+  StartingPops: 1
+  StartingObstacles: 1
+  GroundSize: 5
+  EmptyGridCells: []
+  OccupiedGridCells: []
   timeScale: 1

@@ -1,34 +1,21 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MyTree : MonoBehaviour, ISpawnable {
+public class GenericObstacle : MonoBehaviour, ISpawnable {
 
 	public GridCell MyGridCell;
+
 	public static int Count { get; private set; }
-	public bool HasBeenChoppedDown;
 
-	public IEnumerator ChopTree()
-	{
-		WorldManager.Instance.OccupiedGridCells.Remove(MyGridCell);
-		WorldManager.Instance.EmptyGridCells.Add(MyGridCell);
-		MyGridCell.GridObject = null;
-		MyGridCell = null;
-		HasBeenChoppedDown = true;
-		yield return new WaitForSeconds(UnityEngine.Random.Range(2f, 10f));
-		EventManager.Instance.OnTreeChopped.Invoke();
-	}
-
-	public bool HasBeenGathered() => HasBeenChoppedDown;
+	public bool HasBeenGathered() => true;
 
 	public void SetAside() => gameObject.transform.position = new Vector3(10000f, 10000f, 10000f);
 
 	public GameObject ThisGameObject() => gameObject;
 
-	public void InstantiateThis (List<ISpawnable> spawns)
+	public void InstantiateThis(List<ISpawnable> spawns)
 	{
-		HasBeenChoppedDown = false;
 		if (WorldManager.Instance.EmptyGridCells.Count != 0)
 		{
 			int randomIndex = UnityEngine.Random.Range(0, WorldManager.Instance.EmptyGridCells.Count);
@@ -54,7 +41,7 @@ public class MyTree : MonoBehaviour, ISpawnable {
 		}
 		else
 		{
-			Debug.LogError("No valid position found for a tree.");
+			Debug.LogError("No valid position found for a obstacle.");
 		}
 	}
 
