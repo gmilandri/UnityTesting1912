@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GenericObstacle : MonoBehaviour, ISpawnable {
+public class GenericObstacle : MonoBehaviour, IStatic {
 
 	public GridCell MyGridCell;
 
 	public static int Count { get; private set; }
-
-	public bool HasBeenGathered() => true;
 
 	public void SetAside() => gameObject.transform.position = new Vector3(10000f, 10000f, 10000f);
 

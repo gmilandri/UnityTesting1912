@@ -4,8 +4,6 @@ using UnityEngine;
 public interface ISpawnable
 {
 
-    bool HasBeenGathered();
-
     GameObject ThisGameObject();
 
     void InstantiateThis(List<ISpawnable> spawns);

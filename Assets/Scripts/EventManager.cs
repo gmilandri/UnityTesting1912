@@ -4,11 +4,11 @@ using UnityEngine.Events;
 
 public class EventManager : Singleton<EventManager> {
 
-	public UnityEvent OnTreeChopped;
+	public ResourceEvent OnTreeChopped;
 
 	void Start () {
 		if (OnTreeChopped == null)
-			OnTreeChopped = new UnityEvent();
+			OnTreeChopped = new ResourceEvent();
 	}
 	
 }

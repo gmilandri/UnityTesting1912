@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MyTree : MonoBehaviour, ISpawnable {
+public class MyTree : MonoBehaviour, IResource {
 
 	public GridCell MyGridCell;
 	public static int Count { get; private set; }
@@ -17,7 +17,7 @@ public class MyTree : MonoBehaviour, ISpawnable {
 		MyGridCell = null;
 		HasBeenChoppedDown = true;
 		yield return new WaitForSeconds(UnityEngine.Random.Range(2f, 10f));
-		EventManager.Instance.OnTreeChopped.Invoke();
+		EventManager.Instance.OnTreeChopped.Invoke(this);
 	}
 
 	public bool HasBeenGathered() => HasBeenChoppedDown;
@@ -36,6 +36,7 @@ public class MyTree : MonoBehaviour, ISpawnable {
 			if (!spawns.Contains(this))
 			{
 				spawns.Add(this);
+				WorldManager.Instance.Resources.Add(this);
 			}
 
 			var myNewGridCell = WorldManager.Instance.EmptyGridCells[randomIndex];

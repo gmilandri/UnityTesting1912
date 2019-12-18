@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface ICreature {
-
-
-
+public interface IResource : IStatic
+{
+    bool HasBeenGathered();
 }

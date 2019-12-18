@@ -367,8 +367,8 @@ MonoBehaviour:
   OnTreeChopped:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
+    m_TypeName: ResourceEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!4 &1654643167
 Transform:
   m_ObjectHideFlags: 0
@@ -403,10 +403,10 @@ MonoBehaviour:
   GenericObstacles:
   - {fileID: 152728, guid: a12c08b4d46f46242a2802fe90df7f73, type: 2}
   StartingTrees: 5
-  StartingHouses: 1
-  StartingPops: 1
-  StartingObstacles: 1
-  GroundSize: 5
+  StartingHouses: 3
+  StartingPops: 3
+  StartingObstacles: 4
+  GroundSize: 10
   EmptyGridCells: []
   OccupiedGridCells: []
   timeScale: 1

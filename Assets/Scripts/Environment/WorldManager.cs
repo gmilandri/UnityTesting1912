@@ -27,6 +27,7 @@ public class WorldManager : Singleton<WorldManager> {
 	public int GroundSize = 20;
 
 	public List<ISpawnable> WorldObjects { get; private set; }
+	public List<IResource> Resources { get; private set; }
 
 	public List<GridCell> EmptyGridCells;
 	public List<GridCell> OccupiedGridCells;
@@ -37,6 +38,7 @@ public class WorldManager : Singleton<WorldManager> {
 	void Awake()
 	{
 		WorldObjects = new List<ISpawnable>();
+		Resources = new List<IResource>();
 		EmptyGridCells = new List<GridCell>();
 		OccupiedGridCells = new List<GridCell>();
 		_ground = GameObject.FindGameObjectWithTag("Ground");
@@ -57,10 +59,9 @@ public class WorldManager : Singleton<WorldManager> {
 
 	public int GetGridSize => GroundSize;
 
-	void _worldManager_TreeChopped()
+	void _worldManager_TreeChopped(IResource resource)
 	{
-		var tree = WorldObjects.First(t => t.HasBeenGathered());
-		tree.InstantiateThis(WorldObjects);
+		resource.InstantiateThis(WorldObjects);
 	}
 
 	private void GenerateWorld()

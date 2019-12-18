@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class House : MonoBehaviour, ISpawnable {
+public class House : MonoBehaviour, IBuilding {
 
 	public GridCell MyGridCell;
 	public static int Count { get; private set; }
-
-	public bool HasBeenGathered() => false;
 
 	public void SetAside() => gameObject.transform.position = new Vector3(10000f, 10000f, 10000f);
 
