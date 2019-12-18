@@ -11,7 +11,7 @@ public class Human : MonoBehaviour, ICreature {
 	private float _gatheringDistance = 3f;
 	private Animator _animator;
 	private NavMeshAgent _navMeshAgent;
-	private HumanState _humanState;
+	public HumanState _humanState;
 
 	void Awake()
 	{
@@ -47,6 +47,11 @@ public class Human : MonoBehaviour, ICreature {
 		}
 	}
 
+	//void OnAnimatorMove()
+	//{
+	//	transform.position = _navMeshAgent.nextPosition;
+	//}
+
 	public void SetAside() => gameObject.transform.position = new Vector3(10000f, 10000f, 10000f);
 
 	public GameObject ThisGameObject() => gameObject;
@@ -70,6 +75,8 @@ public class Human : MonoBehaviour, ICreature {
 
 			_navMeshAgent.enabled = true;
 
+			//_navMeshAgent.updatePosition = false;
+
 		}
 		else
 		{
@@ -82,11 +89,11 @@ public class Human : MonoBehaviour, ICreature {
 		var resources = WorldManager.Instance.Resources;
 		var myPos = gameObject.transform.position;
 		var minDistance = float.MaxValue;
-		var closestSpawnIndex = 0;
+		var closestSpawnIndex = -1;
 
 		for (int i = 0; i < resources.Count; i++)
 		{
-			if (resources[i] is MyTree && !resources[i].HasBeenGathered())
+			if (!resources[i].HasBeenGathered())
 			{
 				var pos = resources[i].ThisGameObject().transform.position;
 				if (Vector3.Distance(pos, myPos) < minDistance)
@@ -97,13 +104,22 @@ public class Human : MonoBehaviour, ICreature {
 			}
 		}
 
-		myResourceDestination = resources[closestSpawnIndex];
+		if (closestSpawnIndex >= 0)
+		{
 
-		_navMeshAgent.SetDestination(myResourceDestination.ThisGameObject().transform.position);
+			myResourceDestination = resources[closestSpawnIndex];
 
-		Debug.Log("Found a tree at " + myResourceDestination.ThisGameObject().transform.position.ToString());
+			_navMeshAgent.SetDestination(myResourceDestination.ThisGameObject().transform.position);
 
-		_humanState = HumanState.GatheringResource;
+			//Debug.Log("Found a tree at " + myResourceDestination.ThisGameObject().transform.position.ToString());
+
+			_humanState = HumanState.GatheringResource;
+		}
+		else
+		{
+			Debug.Log("There was not a single gatherable tree.");
+			DoSomeRest();
+		}
 	}
 
 	public void ApproachTree()
@@ -115,22 +131,31 @@ public class Human : MonoBehaviour, ICreature {
 			if (myResourceDestination != null && myResourceDestination.HasBeenGathered())
 				myResourceDestination = null;
 
-			StartCoroutine(DoSomeRest());
+			_humanState = HumanState.LookingForResource;
 		}
-		else if (Vector3.Distance(myResourceDestination.ThisGameObject().transform.position, gameObject.transform.position) < _gatheringDistance)
+		else if (_navMeshAgent.hasPath && _navMeshAgent.remainingDistance < _gatheringDistance)
 		{
-			_navMeshAgent.ResetPath();
-			_navMeshAgent.isStopped = true;
+			Debug.Log("A tree was cut down.");
 
-			myResourceDestination.SetAside();
+			_navMeshAgent.ResetPath();
+
+			_navMeshAgent.acceleration = 100;
+
+			myResourceDestination.ThisGameObject().GetComponent<MyTree>().HasBeenChoppedDown = true;
 
 			StartCoroutine(myResourceDestination.ThisGameObject().GetComponent<MyTree>().ChopTree());
 
 			myResourceDestination = null;
 
-			Debug.Log("I cut a tree! Starting rest...");
+			ResetHeadLook();
 
 			StartCoroutine(DoSomeRest());
+		}
+		else if (_navMeshAgent.hasPath)
+		{
+			float turnAngle = Vector3.Cross(this.transform.position.normalized, _navMeshAgent.steeringTarget.normalized).y;
+
+			LookAtTarget(turnAngle);
 		}
 	}
 
@@ -140,12 +165,23 @@ public class Human : MonoBehaviour, ICreature {
 
 		yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 5f));
 
-		Debug.Log("Ending rest!");
-		_navMeshAgent.isStopped = false;
+		//Debug.Log("Ending rest!");
+
 		_humanState = HumanState.LookingForResource;
 	}
 
-	enum HumanState
+	void LookAtTarget(float angle)
+	{
+		//Debug.Log("Rotating head at " + angle.ToString());
+		_animator.SetFloat("Head_Horizontal_f", angle);
+	}
+
+	void ResetHeadLook()
+	{
+		_animator.SetFloat("Head_Horizontal_f", 0f);
+	}
+
+	public enum HumanState
 	{
 		LookingForResource,
 		GatheringResource,

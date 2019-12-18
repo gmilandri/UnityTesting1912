@@ -15,14 +15,11 @@ public class MyTree : MonoBehaviour, IResource {
 		WorldManager.Instance.EmptyGridCells.Add(MyGridCell);
 		MyGridCell.GridObject = null;
 		MyGridCell = null;
-		HasBeenChoppedDown = true;
 		yield return new WaitForSeconds(UnityEngine.Random.Range(2f, 10f));
 		EventManager.Instance.OnTreeChopped.Invoke(this);
 	}
 
 	public bool HasBeenGathered() => HasBeenChoppedDown;
-
-	public void SetAside() => gameObject.transform.position = new Vector3(10000f, 10000f, 10000f);
 
 	public GameObject ThisGameObject() => gameObject;
 

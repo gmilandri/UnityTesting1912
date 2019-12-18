@@ -8,6 +8,4 @@ public interface ISpawnable
 
     void InstantiateThis(List<ISpawnable> spawns);
 
-    void SetAside();
-
 }

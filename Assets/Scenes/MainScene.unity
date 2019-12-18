@@ -393,20 +393,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b4017f57f8552a47ad94bc3a83baf17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cellPrefab: {fileID: 179200, guid: 43bb48f07d067d848b1d4c90aa160d5d, type: 2}
   _housePrefab: {fileID: 160310, guid: f5b09ff074cab9d4c950f6fc368b5ec6, type: 2}
   _popPrefab: {fileID: 180650, guid: c80d63d739f7231458975214a486d247, type: 2}
+  CellPrefabs:
+  - {fileID: 179200, guid: 43bb48f07d067d848b1d4c90aa160d5d, type: 2}
+  - {fileID: 179200, guid: 43bb48f07d067d848b1d4c90aa160d5d, type: 2}
+  - {fileID: 179200, guid: 43bb48f07d067d848b1d4c90aa160d5d, type: 2}
+  - {fileID: 179200, guid: 43bb48f07d067d848b1d4c90aa160d5d, type: 2}
+  - {fileID: 179200, guid: 43bb48f07d067d848b1d4c90aa160d5d, type: 2}
+  - {fileID: 119722, guid: fd94e64e2a4246242a072bd1ce351d43, type: 2}
+  - {fileID: 193586, guid: a7cc05f9d3a569c4197fee6db44ab581, type: 2}
+  - {fileID: 193586, guid: a7cc05f9d3a569c4197fee6db44ab581, type: 2}
   TreePrefabs:
   - {fileID: 162482, guid: 05ada695a69f7274f8a6562f8c72503d, type: 2}
   - {fileID: 179848, guid: b95b26095c91c7d4ca6786fa33dd8076, type: 2}
   - {fileID: 182186, guid: dc652c15fc5d5d24aadaed46da941c82, type: 2}
   GenericObstacles:
   - {fileID: 152728, guid: a12c08b4d46f46242a2802fe90df7f73, type: 2}
-  StartingTrees: 5
-  StartingHouses: 3
-  StartingPops: 3
-  StartingObstacles: 4
-  GroundSize: 10
+  StartingTrees: 50
+  StartingHouses: 20
+  StartingPops: 20
+  StartingObstacles: 20
+  GroundSize: 20
   EmptyGridCells: []
   OccupiedGridCells: []
   timeScale: 1

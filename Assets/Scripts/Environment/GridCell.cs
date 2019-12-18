@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class GridCell : MonoBehaviour {
 
@@ -9,6 +10,7 @@ public class GridCell : MonoBehaviour {
 	public bool IsEmpty => GridObject == null ? true : false;
 
 	// Use this for initialization
+
 	void Start () {
 		
 	}

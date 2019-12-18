@@ -10,12 +10,11 @@ public class WorldManager : Singleton<WorldManager> {
 	private GameObject _ground;
 
 	[SerializeField]
-	private GameObject _cellPrefab;
-	[SerializeField]
 	private GameObject _housePrefab;
 	[SerializeField]
 	private GameObject _popPrefab;
 
+	public GameObject[] CellPrefabs;
 	public GameObject[] TreePrefabs;
 	public GameObject[] GenericObstacles;
 
@@ -85,7 +84,8 @@ public class WorldManager : Singleton<WorldManager> {
 		{
 			for (int j = 0; j < GroundSize; j++)
 			{
-				GameObject newCell = Instantiate(_cellPrefab, _ground.transform);
+				var randomTile = UnityEngine.Random.Range(0, CellPrefabs.Length);
+				GameObject newCell = Instantiate(CellPrefabs[randomTile], _ground.transform);
 				newCell.transform.position = new Vector3(i * 5f, 0f, j * 5f);
 				EmptyGridCells.Add(newCell.GetComponent<GridCell>());
 			}
