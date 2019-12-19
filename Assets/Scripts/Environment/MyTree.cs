@@ -23,37 +23,12 @@ public class MyTree : MonoBehaviour, IResource {
 
 	public GameObject ThisGameObject() => gameObject;
 
-	public void InstantiateThis (List<ISpawnable> spawns)
+	public void SetCell(GridCell cell) => MyGridCell = cell;
+
+	public void InstantiateThis()
 	{
 		HasBeenChoppedDown = false;
-		if (WorldManager.Instance.EmptyGridCells.Count != 0)
-		{
-			int randomIndex = UnityEngine.Random.Range(0, WorldManager.Instance.EmptyGridCells.Count);
-
-			if (!spawns.Contains(this))
-			{
-				spawns.Add(this);
-				WorldManager.Instance.Resources.Add(this);
-			}
-
-			var myNewGridCell = WorldManager.Instance.EmptyGridCells[randomIndex];
-
-			var pos = new Vector3(myNewGridCell.gameObject.transform.position.x - 2.5f, 0f, myNewGridCell.gameObject.transform.position.z - 2.5f);
-
-			gameObject.transform.position = pos;
-
-			myNewGridCell.GridObject = this;
-
-			MyGridCell = myNewGridCell;
-
-			WorldManager.Instance.EmptyGridCells.Remove(myNewGridCell);
-			WorldManager.Instance.OccupiedGridCells.Add(myNewGridCell);
-
-		}
-		else
-		{
-			Debug.LogError("No valid position found for a tree.");
-		}
+		Instantiator.Instance.WorldInstantiate(this);
 	}
 
 	void Awake()

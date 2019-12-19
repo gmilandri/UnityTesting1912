@@ -6,6 +6,6 @@ public interface ISpawnable
 
     GameObject ThisGameObject();
 
-    void InstantiateThis(List<ISpawnable> spawns);
+    void InstantiateThis();
 
 }

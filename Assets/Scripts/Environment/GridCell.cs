@@ -9,6 +9,8 @@ public class GridCell : MonoBehaviour {
 
 	public bool IsEmpty => GridObject == null ? true : false;
 
+	public TileType ThisTileType;
+
 	// Use this for initialization
 
 	void Start () {
@@ -19,4 +21,11 @@ public class GridCell : MonoBehaviour {
 	void Update () {
 		
 	}
+}
+
+public enum TileType
+{
+	Grass,
+	Dirt,
+	Water
 }

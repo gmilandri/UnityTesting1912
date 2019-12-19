@@ -25,6 +25,8 @@ public class WorldManager : Singleton<WorldManager> {
 
 	public int GroundSize = 20;
 
+	public float MaxTileHeightDifference = 0f;
+
 	public List<ISpawnable> WorldObjects { get; private set; }
 	public List<IResource> Resources { get; private set; }
 
@@ -34,7 +36,7 @@ public class WorldManager : Singleton<WorldManager> {
 	[Range(0f, 10f)]
 	public float timeScale = 1f;
 
-	void Awake()
+	public override void Awake()
 	{
 		WorldObjects = new List<ISpawnable>();
 		Resources = new List<IResource>();
@@ -60,7 +62,7 @@ public class WorldManager : Singleton<WorldManager> {
 
 	void _worldManager_TreeChopped(IResource resource)
 	{
-		resource.InstantiateThis(WorldObjects);
+		resource.InstantiateThis();
 	}
 
 	private void GenerateWorld()
@@ -86,8 +88,9 @@ public class WorldManager : Singleton<WorldManager> {
 			{
 				var randomTile = UnityEngine.Random.Range(0, CellPrefabs.Length);
 				GameObject newCell = Instantiate(CellPrefabs[randomTile], _ground.transform);
-				newCell.transform.position = new Vector3(i * 5f, 0f, j * 5f);
-				EmptyGridCells.Add(newCell.GetComponent<GridCell>());
+				newCell.transform.position = new Vector3(i * 5f, UnityEngine.Random.Range(0f, MaxTileHeightDifference), j * 5f);
+				if (newCell.GetComponent<GridCell>().ThisTileType != TileType.Water)
+					EmptyGridCells.Add(newCell.GetComponent<GridCell>());
 			}
 		}
 
@@ -102,7 +105,7 @@ public class WorldManager : Singleton<WorldManager> {
 
 			GameObject newTree = Instantiate(TreePrefabs[randomTree], gameObject.transform);
 
-			newTree.GetComponent<MyTree>().InstantiateThis(WorldObjects);
+			newTree.GetComponent<MyTree>().InstantiateThis();
 
 		}
 		while (MyTree.Count < StartingTrees);
@@ -114,7 +117,7 @@ public class WorldManager : Singleton<WorldManager> {
 		{
 			GameObject newHouse = Instantiate(_housePrefab, gameObject.transform);
 
-			newHouse.GetComponent<House>().InstantiateThis(WorldObjects);
+			newHouse.GetComponent<House>().InstantiateThis();
 
 		}
 		while (House.Count < StartingHouses);
@@ -128,7 +131,7 @@ public class WorldManager : Singleton<WorldManager> {
 
 			GameObject newObstacle = Instantiate(GenericObstacles[randomIndex], gameObject.transform);
 
-			newObstacle.GetComponent<GenericObstacle>().InstantiateThis(WorldObjects);
+			newObstacle.GetComponent<GenericObstacle>().InstantiateThis();
 
 		}
 		while (GenericObstacle.Count < StartingObstacles);
@@ -140,7 +143,7 @@ public class WorldManager : Singleton<WorldManager> {
 		{
 			GameObject newPop = Instantiate(_popPrefab, gameObject.transform);
 
-			newPop.GetComponent<Human>().InstantiateThis(WorldObjects);
+			newPop.GetComponent<Human>().InstantiateThis();
 
 		}
 		while (Human.Count < StartingPops);

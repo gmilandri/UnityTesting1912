@@ -8,7 +8,7 @@ public class Human : MonoBehaviour, ICreature {
 
 	private IResource myResourceDestination;
 	public static int Count { get; private set; }
-	private float _gatheringDistance = 3f;
+	private float _gatheringDistance = 1f;
 	private Animator _animator;
 	private NavMeshAgent _navMeshAgent;
 	public HumanState _humanState;
@@ -52,36 +52,11 @@ public class Human : MonoBehaviour, ICreature {
 	//	transform.position = _navMeshAgent.nextPosition;
 	//}
 
-	public void SetAside() => gameObject.transform.position = new Vector3(10000f, 10000f, 10000f);
-
 	public GameObject ThisGameObject() => gameObject;
 
-	public void InstantiateThis(List<ISpawnable> spawns)
+	public void InstantiateThis()
 	{
-		if (WorldManager.Instance.EmptyGridCells.Count != 0)
-		{
-			int randomIndex = UnityEngine.Random.Range(0, WorldManager.Instance.EmptyGridCells.Count);
-
-			if (!spawns.Contains(this))
-			{
-				spawns.Add(this);
-			}
-
-			var myNewGridCell = WorldManager.Instance.EmptyGridCells[randomIndex];
-
-			var pos = new Vector3(myNewGridCell.gameObject.transform.position.x - 2.5f, 0f, myNewGridCell.gameObject.transform.position.z - 2.5f);
-
-			gameObject.transform.position = pos;
-
-			_navMeshAgent.enabled = true;
-
-			//_navMeshAgent.updatePosition = false;
-
-		}
-		else
-		{
-			Debug.LogError("No valid position found for a human.");
-		}
+		Instantiator.Instance.WorldInstantiate(this);
 	}
 
 	private void LookForTree()
